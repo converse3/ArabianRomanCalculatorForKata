@@ -1,3 +1,4 @@
+import java.text.MessageFormat;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -6,49 +7,49 @@ class Calculator {
     static int val1, val2;
     static char op;
     static int result;
+    static String formattedResult;
 
     public static void main (String[] args) {
-        System.out.println("Введите выражение в арабском формате(1-10) или в римском формате от I до X без разделения знаков:");
+        System.out.println("Введите выражение в арабском формате(1-10) или в римском формате(I-X) без разделения знаков:");
         String userInput = scanner.nextLine();
-        char[] under_char = new char[10];
+        char[] sign = new char[10];
         for (int i = 0; i < userInput.length(); i++) {
-            under_char[i] = userInput.charAt(i);
-            if (under_char[i] == '+') {
-                op = '+';
-            }
-            if (under_char[i] == '-') {
+            sign[i] = userInput.charAt(i);
+            if (sign[i] == '-') {
                 op = '-';
-            }
-            if (under_char[i] == '*') {
+            } else if (sign[i] == '+') {
+                op = '+';
+            } else if (sign[i] == '/') {
+                op = '/';
+            } else if (sign[i] == '*') {
                 op = '*';
             }
-            if (under_char[i] == '/') {
-                op = '/';
-            }
         }
-        String under_charString = String.valueOf(under_char);
-        String[] blacks = under_charString.split("[+-/*]");
-        String stable00 = blacks[0];
-        String stable01 = blacks[1];
-        String string03 = stable01.trim();
-        val1 = romanToNum(stable00);
-        val2 = romanToNum(string03);
+        String signStr = String.valueOf(sign);
+        String[] blacks = signStr.split("[+-/*]");
+        String first = blacks[0];
+        String second = blacks[1];
+        String string3 = second.trim();
+        val1 = romanToNum(first);
+        val2 = romanToNum(string3);
         if (val1 < 0 && val2 < 0) {
             result = 0;
         } else {
             result = calculated(val1, val2, op);
-            System.out.println("-Римский формат счета-");
+            System.out.println("~Римский формат счета~");
             String resultRoman = convertNumToRoman(result);
-            System.out.println(stable00 + " " + op + " " + string03 + " = " + resultRoman);
+            formattedResult = MessageFormat.format("{0} {1} {2} = {3}", first, op, string3, resultRoman);
+            System.out.println(formattedResult);
         }
         try {
-            val1 = Integer.parseInt(stable00);
-            val2 = Integer.parseInt(string03);
+            val1 = Integer.parseInt(first);
+            val2 = Integer.parseInt(string3);
             result = calculated(val1, val2, op);
-            System.out.println("-Арабский формат счета-");
-            System.out.println(val1 + " " + op + " " + val2 + " = " + result);
+            System.out.println("~Арабский формат счета~");
+            formattedResult = MessageFormat.format("{0} {1} {2} = {3}", val1, op, val2, result);
+            System.out.println(formattedResult);
         } catch (NumberFormatException e) {
-            System.out.println("");
+            System.out.println();
         }
     }
 
@@ -62,8 +63,9 @@ class Calculator {
                 "LXXVIII", "LXXIX", "LXXX", "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII",
                 "LXXXVIII", "LXXXIX", "XC", "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C"
         };
-        final String s = roman[numArabian];
-        return s;
+
+        final String str = roman[numArabian];
+        return str;
     }
 
 
@@ -130,7 +132,7 @@ class Calculator {
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Неверный значение операции");
+                throw new IllegalArgumentException("Неверное значение операции");
         }
         return result;
     }
